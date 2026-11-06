@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">nothing</string>
+
+    <string name="search_hint">按文件名搜索</string>
+    <string name="refresh_index">刷新索引</string>
+
+    <string name="status_no_permission">缺少「所有文件访问」权限</string>
+    <string name="status_never_indexed">尚未建立索引，点「刷新索引」开始扫描</string>
+    <string name="status_indexing">正在扫描… 已处理 %1$d 个</string>
+    <string name="status_idle">已索引 %1$d 个文件 · 上次索引 %2$s</string>
+    <string name="status_index_failed">索引失败，请重试</string>
+
+    <string name="empty_results">没有匹配的文件</string>
+
+    <string name="permission_title">需要「所有文件访问」权限</string>
+    <string name="permission_message">nothing 通过全盘文件索引实现按文件名即时搜索，因此需要读取设备上所有文件的权限。\n授权路径：设置 → 应用 → nothing → 所有文件访问管理。授权完成返回本页后会自动刷新状态并开始首次索引。</string>
+    <string name="permission_grant">去授权</string>
+
+    <string name="permission_required_toast">请先授予「所有文件访问」权限</string>
+    <string name="indexing_running_toast">索引正在进行中</string>
+    <string name="index_done_toast">索引完成，共 %1$d 个条目</string>
+    <string name="index_failed_toast">索引失败：%1$s</string>
+    <string name="settings_unavailable_toast">无法打开系统设置页，请手动到设置中授予所有文件访问权限</string>
+
+    <string name="directory_tap_toast">这是一个文件夹：%1$s</string>
+    <string name="file_missing_toast">文件已不存在，请刷新索引</string>
+    <string name="file_unavailable_toast">无法为该文件生成访问授权</string>
+    <string name="no_app_to_open_toast">没有可以打开该文件的应用</string>
+    <string name="no_app_to_share_toast">没有可以分享的应用</string>
+    <string name="path_copied_toast">已复制路径</string>
+    <string name="copy_failed_toast">复制失败</string>
+
+    <string name="open_with">打开方式</string>
+    <string name="share_with">分享方式</string>
+    <string name="action_open_with">打开方式</string>
+    <string name="action_copy_path">复制路径</string>
+    <string name="action_share">分享</string>
+
+    <string name="item_meta">%1$s · %2$s</string>
+    <string name="folder_label">文件夹</string>
+
+    <string-array name="sort_modes">
+        <item>相关度</item>
+        <item>名称</item>
+        <item>大小</item>
+        <item>修改时间</item>
+    </string-array>
+</resources>

@@ -313,7 +313,7 @@ a.card:hover .chip{border-color:var(--line-hi)}
     </div>
 
     <div class="grid" id="grid"></div>
-    <p class="empty" id="empty" hidden>没有匹配的工具。</p>
+    <p class="empty" id="empty" hidden>暂无工具</p>
 
     <footer class="foot">
       <span>© <span id="year"></span> · 我的工具集</span>
@@ -327,61 +327,34 @@ a.card:hover .chip{border-color:var(--line-hi)}
    工具列表 —— 只改这一处就能维护整个首页
    -------------------------------------------------------------------------
    name  工具名（必填）        desc  一句话说明（必填）
-   url   链接；留空 "" 就显示成占位卡片（虚线、不可点）
+   url   真实链接（必填）；留空 "" 或写 "#" 的条目不会被渲染，也不占布局
    tags  标签数组，会自动出现在上面的筛选栏
    ver   版本号，可选，比如 "v0.2.0"
    badge 可选小标记，比如 "新版" / "实验"
+
+   完整示例（只是注释，别直接留成真实数据）：
+   {
+     name: "工具名称",
+     desc: "一句话说明这个工具是做什么的。",
+     url: "downloads/example.zip",
+     tags: ["Android", "文件搜索", "APK"],
+     ver: "v1.0.0",
+     badge: "新"
+   }
    ========================================================================= */
 const TOOLS = [
   {
-    name: "工具名称（TODO）",
-    desc: "一句话说明这个工具是做什么的。",
-    url: "",
-    tags: ["TODO"],
-    ver: "",
-    badge: ""
-  },
-  {
-    name: "工具名称（TODO）",
-    desc: "一句话说明这个工具是做什么的。",
-    url: "",
-    tags: ["TODO"],
-    ver: "",
-    badge: ""
-  },
-  {
-    name: "工具名称（TODO）",
-    desc: "一句话说明这个工具是做什么的。",
-    url: "",
-    tags: ["TODO"],
-    ver: "",
-    badge: ""
-  },
-  {
-    name: "工具名称（TODO）",
-    desc: "一句话说明这个工具是做什么的。",
-    url: "",
-    tags: ["TODO"],
-    ver: "",
-    badge: ""
-  },
-  {
-    name: "工具名称（TODO）",
-    desc: "一句话说明这个工具是做什么的。",
-    url: "",
-    tags: ["TODO"],
-    ver: "",
-    badge: ""
-  },
-  {
-    name: "工具名称（TODO）",
-    desc: "一句话说明这个工具是做什么的。",
-    url: "",
-    tags: ["TODO"],
-    ver: "",
-    badge: ""
+    name: "nothing",
+    desc: "安卓上的全盘文件搜索，按文件名毫秒级过滤 —— Everything 的手机版。",
+    url: "downloads/nothing.apk",
+    tags: ["Android", "文件搜索", "APK"],
+    ver: "v1.0.0",
+    badge: "新"
   }
 ];
+
+/* 只有带真实链接的条目才进入渲染与计数：空链接不再画成占位卡片 */
+const visible = TOOLS.filter(t => t.url && t.url !== "#");
 
 /* ========================== 以下不用改 ========================== */
 
@@ -469,7 +442,7 @@ function matches(tool) {
 }
 
 function renderTags() {
-  const all = [...new Set(TOOLS.flatMap(t => t.tags || []).filter(Boolean))];
+  const all = [...new Set(visible.flatMap(t => t.tags || []).filter(Boolean))];
   tagsEl.replaceChildren();
   for (const t of all) {
     const b = el("button", "tag", t);
@@ -484,13 +457,13 @@ function renderTags() {
 }
 
 function render() {
-  const list = TOOLS.filter(matches);
+  const list = visible.filter(matches);
   gridEl.replaceChildren(...list.map(cardFor));
 
   emptyEl.hidden = list.length > 0;
-  countEl.textContent = list.length === TOOLS.length
-    ? `${TOOLS.length} 个工具`
-    : `${list.length} / ${TOOLS.length} 个工具`;
+  countEl.textContent = list.length === visible.length
+    ? `${visible.length} 个工具`
+    : `${list.length} / ${visible.length} 个工具`;
 
   for (const b of tagsEl.children) {
     b.setAttribute("aria-pressed", String(b.textContent === state.tag));
