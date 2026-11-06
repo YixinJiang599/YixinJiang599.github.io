@@ -1,1 +1,286 @@
-hello word
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>工具集</title>
+<meta name="description" content="我自己写的一些工具。">
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#fff; --text:#1a1d23; --muted:#6b7280;
+    --line:#e5e7eb; --accent:#3b6ef6; --accent-soft:#eaf0ff;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0f1115; --card:#171a21; --text:#e8eaed; --muted:#9aa2b1;
+      --line:#262b35; --accent:#6f97ff; --accent-soft:#1c2436;
+    }
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+
+  /* ---------- 顶部 ---------- */
+  .hero{padding:72px 0 28px}
+  .hero h1{
+    margin:0 0 10px; font-size:clamp(30px,5vw,44px); line-height:1.15;
+    letter-spacing:-.02em; font-weight:700;
+  }
+  .hero .lead{margin:0; color:var(--muted); font-size:17px; max-width:56ch}
+
+  /* ---------- 搜索 ---------- */
+  .search{margin-top:28px}
+  .search input{
+    width:100%; max-width:360px; padding:11px 15px; font-size:15px;
+    color:var(--text); background:var(--card);
+    border:1px solid var(--line); border-radius:10px; outline:none;
+    transition:border-color .15s,box-shadow .15s;
+  }
+  .search input:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-soft)}
+  .search input::placeholder{color:var(--muted)}
+
+  /* ---------- 标签筛选 ---------- */
+  .tags{display:flex; flex-wrap:wrap; gap:8px; margin:22px 0 0}
+  .tags:empty{display:none}
+  .tag{
+    padding:5px 12px; font-size:13px; cursor:pointer;
+    color:var(--muted); background:transparent;
+    border:1px solid var(--line); border-radius:999px;
+    transition:.15s;
+  }
+  .tag:hover{color:var(--text); border-color:var(--muted)}
+  .tag[aria-pressed="true"]{
+    color:var(--accent); background:var(--accent-soft);
+    border-color:transparent; font-weight:600;
+  }
+
+  /* ---------- 卡片 ---------- */
+  .grid{
+    display:grid; gap:14px; margin:26px 0 0;
+    grid-template-columns:repeat(auto-fill,minmax(268px,1fr));
+  }
+  .tool{
+    display:flex; flex-direction:column; gap:7px;
+    padding:18px 19px; border-radius:14px;
+    background:var(--card); border:1px solid var(--line);
+    text-decoration:none; color:inherit;
+    transition:transform .16s,border-color .16s,box-shadow .16s;
+  }
+  a.tool:hover{
+    transform:translateY(-2px); border-color:var(--accent);
+    box-shadow:0 10px 26px -12px rgba(0,0,0,.35);
+  }
+  .tool .name{
+    display:flex; align-items:center; gap:8px;
+    font-size:16px; font-weight:650; letter-spacing:-.01em;
+  }
+  .tool .name .arrow{
+    margin-left:auto; color:var(--muted); font-size:14px;
+    opacity:0; transition:opacity .16s,transform .16s;
+  }
+  a.tool:hover .name .arrow{opacity:1; transform:translate(2px,-1px)}
+  .tool .desc{margin:0; font-size:14px; color:var(--muted); line-height:1.55}
+  .tool .meta{display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; padding-top:6px}
+  .chip{
+    font-size:12px; padding:2px 8px; border-radius:6px;
+    color:var(--muted); background:var(--bg); border:1px solid var(--line);
+  }
+  .badge{
+    font-size:11px; font-weight:600; padding:1px 7px; border-radius:6px;
+    color:var(--accent); background:var(--accent-soft);
+  }
+  /* 占位卡片：内容还没填 */
+  .tool.is-placeholder{
+    border-style:dashed; background:transparent;
+  }
+  .tool.is-placeholder .name{color:var(--muted); font-weight:500}
+
+  .empty{margin:40px 0; color:var(--muted); text-align:center}
+
+  /* ---------- 页脚 ---------- */
+  footer{
+    margin-top:56px; padding:26px 0 48px;
+    border-top:1px solid var(--line);
+    color:var(--muted); font-size:13px;
+    display:flex; flex-wrap:wrap; gap:6px 18px; justify-content:space-between;
+  }
+  footer a{color:var(--muted); text-decoration:none}
+  footer a:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <!-- TODO: 把标题和这句简介改成你自己的 -->
+    <h1>工具集</h1>
+    <p class="lead">我自己写的一些工具，放在这里方便查找和使用。</p>
+
+    <div class="search">
+      <input id="q" type="search" placeholder="搜索工具…" aria-label="搜索工具" autocomplete="off">
+    </div>
+    <div id="tags" class="tags" role="group" aria-label="按标签筛选"></div>
+  </header>
+
+  <main>
+    <div id="grid" class="grid"></div>
+    <p id="empty" class="empty" hidden>没有匹配的工具。</p>
+  </main>
+
+  <footer>
+    <!-- TODO: 换成你自己的主页 / 邮箱 -->
+    <span>© <span id="year"></span> · 我的工具集</span>
+    <span>
+      <a href="https://github.com/YixinJiang599" target="_blank" rel="noopener">GitHub</a>
+    </span>
+  </footer>
+
+</div>
+
+<script>
+/* =========================================================================
+   工具列表 —— 只改这一处就能维护整个首页
+   -------------------------------------------------------------------------
+   字段说明：
+     name  工具名（必填）
+     desc  一句话说明（必填）
+     url   链接；留空 "" 就显示成一张不可点的占位卡片
+     tags  标签数组，会自动出现在上面的筛选栏里
+     badge 可选，卡片右上角的小标记，比如 "新版" / "实验"
+   ========================================================================= */
+const TOOLS = [
+  {
+    name: "工具名称（TODO）",
+    desc: "一句话说明这个工具是做什么的。",
+    url: "",
+    tags: ["TODO"],
+    badge: ""
+  },
+  {
+    name: "工具名称（TODO）",
+    desc: "一句话说明这个工具是做什么的。",
+    url: "",
+    tags: ["TODO"],
+    badge: ""
+  },
+  {
+    name: "工具名称（TODO）",
+    desc: "一句话说明这个工具是做什么的。",
+    url: "",
+    tags: ["TODO"],
+    badge: ""
+  },
+  {
+    name: "工具名称（TODO）",
+    desc: "一句话说明这个工具是做什么的。",
+    url: "",
+    tags: ["TODO"],
+    badge: ""
+  },
+  {
+    name: "工具名称（TODO）",
+    desc: "一句话说明这个工具是做什么的。",
+    url: "",
+    tags: ["TODO"],
+    badge: ""
+  },
+  {
+    name: "工具名称（TODO）",
+    desc: "一句话说明这个工具是做什么的。",
+    url: "",
+    tags: ["TODO"],
+    badge: ""
+  }
+];
+
+/* ========================== 以下不用改 ========================== */
+
+const gridEl  = document.getElementById("grid");
+const tagsEl  = document.getElementById("tags");
+const emptyEl = document.getElementById("empty");
+const qEl     = document.getElementById("q");
+
+document.getElementById("year").textContent = new Date().getFullYear();
+
+const state = { keyword: "", tag: "" };
+
+function el(tag, cls, text) {
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text != null) n.textContent = text;
+  return n;
+}
+
+function cardFor(tool) {
+  const clickable = Boolean(tool.url && tool.url !== "#");
+  const card = document.createElement(clickable ? "a" : "div");
+  card.className = "tool" + (clickable ? "" : " is-placeholder");
+  if (clickable) {
+    card.href = tool.url;
+    card.target = "_blank";
+    card.rel = "noopener";
+  }
+
+  const nameRow = el("div", "name");
+  nameRow.append(el("span", null, tool.name || "未命名工具"));
+  if (tool.badge) nameRow.append(el("span", "badge", tool.badge));
+  if (clickable) nameRow.append(el("span", "arrow", "↗"));
+  card.append(nameRow);
+
+  card.append(el("p", "desc", tool.desc || ""));
+
+  const tags = Array.isArray(tool.tags) ? tool.tags.filter(Boolean) : [];
+  if (tags.length) {
+    const meta = el("div", "meta");
+    for (const t of tags) meta.append(el("span", "chip", t));
+    card.append(meta);
+  }
+  return card;
+}
+
+function matches(tool) {
+  if (state.tag && !(tool.tags || []).includes(state.tag)) return false;
+  if (!state.keyword) return true;
+  const hay = [tool.name, tool.desc, ...(tool.tags || [])].join(" ").toLowerCase();
+  return hay.includes(state.keyword);
+}
+
+function renderTags() {
+  const all = [...new Set(TOOLS.flatMap(t => t.tags || []).filter(Boolean))];
+  tagsEl.replaceChildren();
+  for (const t of all) {
+    const b = el("button", "tag", t);
+    b.type = "button";
+    b.setAttribute("aria-pressed", String(state.tag === t));
+    b.addEventListener("click", () => {
+      state.tag = state.tag === t ? "" : t;
+      render();
+    });
+    tagsEl.append(b);
+  }
+}
+
+function render() {
+  const list = TOOLS.filter(matches);
+  gridEl.replaceChildren(...list.map(cardFor));
+  emptyEl.hidden = list.length > 0;
+  for (const b of tagsEl.children) {
+    b.setAttribute("aria-pressed", String(b.textContent === state.tag));
+  }
+}
+
+qEl.addEventListener("input", () => {
+  state.keyword = qEl.value.trim().toLowerCase();
+  render();
+});
+
+renderTags();
+render();
+</script>
+</body>
+</html>
